@@ -10,6 +10,7 @@ import { compileToFunctions } from './compiler/index'
 import { shouldDecodeNewlines, shouldDecodeNewlinesForHref } from './util/compat'
 
 const idToTemplate = cached(id => {
+  // 获取el 对象
   const el = query(id)
   return el && el.innerHTML
 })
@@ -22,6 +23,7 @@ Vue.prototype.$mount = function (
   el = el && query(el)
 
   /* istanbul ignore if */
+  // el 不能是 body 或者 html
   if (el === document.body || el === document.documentElement) {
     process.env.NODE_ENV !== 'production' && warn(
       `Do not mount Vue to <html> or <body> - mount to normal elements instead.`
@@ -31,13 +33,16 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+  // 将 template/el 转化成render函数 ，如果options里同时具有template和render，则直接执行render
   if (!options.render) {
     let template = options.template
     if (template) {
+      // 如果template是字符串
       if (typeof template === 'string') {
         if (template.charAt(0) === '#') {
           template = idToTemplate(template)
           /* istanbul ignore if */
+          // template对应的element 不存在
           if (process.env.NODE_ENV !== 'production' && !template) {
             warn(
               `Template element not found or is empty: ${options.template}`,
@@ -45,6 +50,7 @@ Vue.prototype.$mount = function (
             )
           }
         }
+        // 如果template是node节点
       } else if (template.nodeType) {
         template = template.innerHTML
       } else {
@@ -79,6 +85,7 @@ Vue.prototype.$mount = function (
       }
     }
   }
+  // 调用mount方法，返回el
   return mount.call(this, el, hydrating)
 }
 

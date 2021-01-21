@@ -27,10 +27,12 @@ Vue.config.getTagNamespace = getTagNamespace
 Vue.config.isUnknownElement = isUnknownElement
 
 // install platform runtime directives & components
+// 注册指令和组件
 extend(Vue.options.directives, platformDirectives)
 extend(Vue.options.components, platformComponents)
 
 // install platform patch function
+// 原型上注册patch函数，如果是浏览器环境，返回patch，如果非浏览器环境，返回一个空函数
 Vue.prototype.__patch__ = inBrowser ? patch : noop
 
 // public mount method

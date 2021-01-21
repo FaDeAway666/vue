@@ -48,7 +48,7 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
-  if (opts.props) initProps(vm, opts.props)
+  if (opts.props) initProps(vm, opts.props) // 将props数据转化为响应式，并注入到vm中
   if (opts.methods) initMethods(vm, opts.methods)
   if (opts.data) {
     initData(vm)
@@ -127,6 +127,7 @@ function initData (vm: Component) {
   const props = vm.$options.props
   const methods = vm.$options.methods
   let i = keys.length
+  // 判断 data 上的成员是否和 props和methods重名
   while (i--) {
     const key = keys[i]
     if (process.env.NODE_ENV !== 'production') {
@@ -148,6 +149,7 @@ function initData (vm: Component) {
     }
   }
   // observe data
+  // 响应式处理
   observe(data, true /* asRootData */)
 }
 
@@ -270,7 +272,7 @@ function initMethods (vm: Component, methods: Object) {
           vm
         )
       }
-      if (props && hasOwn(props, key)) {
+      if (props && hasOwn(props, key)) { // props 和 methods中的属性不能重名
         warn(
           `Method "${key}" has already been defined as a prop.`,
           vm

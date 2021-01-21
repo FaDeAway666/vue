@@ -11,7 +11,7 @@ let uid = 0
  * directives subscribing to it.
  */
 export default class Dep {
-  static target: ?Watcher;
+  static target: ?Watcher; // 是否存在watcher
   id: number;
   subs: Array<Watcher>;
 
@@ -54,13 +54,14 @@ export default class Dep {
 // can be evaluated at a time.
 Dep.target = null
 const targetStack = []
-
+// 入栈并将当前watcher赋值给Dep.target
 export function pushTarget (target: ?Watcher) {
   targetStack.push(target)
   Dep.target = target
 }
 
 export function popTarget () {
+  // 出栈操作
   targetStack.pop()
   Dep.target = targetStack[targetStack.length - 1]
 }
