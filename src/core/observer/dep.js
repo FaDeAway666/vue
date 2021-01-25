@@ -41,6 +41,7 @@ export default class Dep {
       // subs aren't sorted in scheduler if not running async
       // we need to sort them now to make sure they fire in correct
       // order
+      // 按照watcher的创建顺序进行排序
       subs.sort((a, b) => a.id - b.id)
     }
     for (let i = 0, l = subs.length; i < l; i++) {
@@ -55,6 +56,8 @@ export default class Dep {
 Dep.target = null
 const targetStack = []
 // 入栈并将当前watcher赋值给Dep.target
+// 父子组件嵌套的时候，先把父组件对应的watcher入栈
+// 再去处理子组件的watcher，子组件处理完毕后在将父组件
 export function pushTarget (target: ?Watcher) {
   targetStack.push(target)
   Dep.target = target

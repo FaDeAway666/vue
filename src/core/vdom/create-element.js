@@ -59,6 +59,7 @@ export function _createElement (
     )
     return createEmptyVNode()
   }
+  // 如果存在is，<component v-bind:is="someComponent"></component>
   // object syntax in v-bind
   if (isDef(data) && isDef(data.is)) {
     tag = data.is
@@ -80,6 +81,7 @@ export function _createElement (
     }
   }
   // support single function children as default scoped slot
+  // 处理插槽
   if (Array.isArray(children) &&
     typeof children[0] === 'function'
   ) {
@@ -108,6 +110,7 @@ export function _createElement (
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
       )
+      // 判断是否是自定义组件
     } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
       // component
       vnode = createComponent(Ctor, data, context, children, tag)

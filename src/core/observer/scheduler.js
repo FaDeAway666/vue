@@ -68,6 +68,7 @@ if (inBrowser && !isIE) {
 /**
  * Flush both queues and run the watchers.
  */
+// flush所有的队列并且run这些watcher
 function flushSchedulerQueue () {
   currentFlushTimestamp = getNow()
   flushing = true
@@ -81,6 +82,9 @@ function flushSchedulerQueue () {
   //    user watchers are created before the render watcher)
   // 3. If a component is destroyed during a parent component's watcher run,
   //    its watchers can be skipped.
+  // 1. 从父组件到子组件进行更新
+  // 2. 用户watcher在渲染watcher之前执行
+  // 3. 一个watcher在父组件执行的过程中被销毁，这个watcher将被跳过
   queue.sort((a, b) => a.id - b.id)
 
   // do not cache length because more watchers might be pushed
@@ -161,6 +165,7 @@ function callActivatedHooks (queue) {
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
  */
+/**将watcher放入一个队列当中 */
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {

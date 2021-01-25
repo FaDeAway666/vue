@@ -224,16 +224,22 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
   ) {
     warn(`Cannot set reactive property on undefined, null, or primitive value: ${(target: any)}`)
   }
+  // 判断target是否是数组，key是否是合法的索引
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.length = Math.max(target.length, key)
+    // 通过 splice 对key位置的元素进行替换
+    // splice 方法进行了响应化处理
     target.splice(key, 1, val)
     return val
   }
+  // 如果key在对象中存在，直接赋值
   if (key in target && !(key in Object.prototype)) {
     target[key] = val
     return val
   }
+  // 获取target中的ob对象
   const ob = (target: any).__ob__
+  // 如果是vue实例或者$data，返回错误
   if (target._isVue || (ob && ob.vmCount)) {
     process.env.NODE_ENV !== 'production' && warn(
       'Avoid adding reactive properties to a Vue instance or its root $data ' +
@@ -241,10 +247,12 @@ export function set (target: Array<any> | Object, key: any, val: any): any {
     )
     return val
   }
+  // ob不存在，target不是响应式对象，则直接赋值
   if (!ob) {
     target[key] = val
     return val
   }
+  // 将key设为响应式属性，并发送通知
   defineReactive(ob.value, key, val)
   ob.dep.notify()
   return val
@@ -259,6 +267,7 @@ export function del (target: Array<any> | Object, key: any) {
   ) {
     warn(`Cannot delete reactive property on undefined, null, or primitive value: ${(target: any)}`)
   }
+  // 数组的删除
   if (Array.isArray(target) && isValidArrayIndex(key)) {
     target.splice(key, 1)
     return
@@ -271,10 +280,12 @@ export function del (target: Array<any> | Object, key: any) {
     )
     return
   }
+  // 如果target上没有key属性，直接返回
   if (!hasOwn(target, key)) {
     return
   }
   delete target[key]
+  // 如果不存在ob，就不派发通知
   if (!ob) {
     return
   }
@@ -288,7 +299,7 @@ export function del (target: Array<any> | Object, key: any) {
 function dependArray (value: Array<any>) {
   for (let e, i = 0, l = value.length; i < l; i++) {
     e = value[i]
-    e && e.__ob__ && e.__ob__.dep.depend()
+    e && e.__ob__ && e.__ob__.dep.depend() // 只是发送了通知，但没有设置响应式
     if (Array.isArray(e)) {
       dependArray(e)
     }

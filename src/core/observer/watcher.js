@@ -90,6 +90,7 @@ export default class Watcher {
         )
       }
     }
+    // 有lazy属性，不直接执行get，此时是计算属性
     this.value = this.lazy
       ? undefined
       : this.get()
@@ -163,6 +164,7 @@ export default class Watcher {
    */
   update () {
     /* istanbul ignore else */
+    // 渲染watcher的lazy和sync默认为false
     if (this.lazy) {
       this.dirty = true
     } else if (this.sync) {
@@ -190,13 +192,15 @@ export default class Watcher {
         // set new value
         const oldValue = this.value
         this.value = value
+        // 如果是用户watcher
         if (this.user) {
           try {
+            // 执行回调
             this.cb.call(this.vm, value, oldValue)
           } catch (e) {
             handleError(e, this.vm, `callback for watcher "${this.expression}"`)
           }
-        } else {
+        } else { // 如果不是用户watcher
           this.cb.call(this.vm, value, oldValue)
         }
       }

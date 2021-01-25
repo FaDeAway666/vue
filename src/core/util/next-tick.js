@@ -10,6 +10,7 @@ export let isUsingMicroTask = false
 const callbacks = []
 let pending = false
 
+// 执行回调数组中的方法
 function flushCallbacks () {
   pending = false
   const copies = callbacks.slice(0)
@@ -48,7 +49,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
     // microtask queue but the queue isn't being flushed, until the browser
     // needs to do some other work, e.g. handle a timer. Therefore we can
     // "force" the microtask queue to be flushed by adding an empty timer.
-    if (isIOS) setTimeout(noop)
+    if (isIOS) setTimeout(noop) // 如果是IOS，使用settimeout
   }
   isUsingMicroTask = true
 } else if (!isIE && typeof MutationObserver !== 'undefined' && (
@@ -86,6 +87,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
 
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
+  // 把 cb 加上异常处理存入 callbacks 数组中
   callbacks.push(() => {
     if (cb) {
       try {
@@ -97,8 +99,10 @@ export function nextTick (cb?: Function, ctx?: Object) {
       _resolve(ctx)
     }
   })
+  // 判断是否在处理中
   if (!pending) {
     pending = true
+    // 调用callbacks
     timerFunc()
   }
   // $flow-disable-line
