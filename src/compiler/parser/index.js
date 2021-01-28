@@ -81,7 +81,7 @@ export function parse (
   options: CompilerOptions
 ): ASTElement | void {
   warn = options.warn || baseWarn
-
+  // 解析options
   platformIsPreTag = options.isPreTag || no
   platformMustUseProp = options.mustUseProp || no
   platformGetTagNamespace = options.getTagNamespace || no
@@ -200,7 +200,7 @@ export function parse (
       )
     }
   }
-
+  // 解析模板HTML
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,
@@ -220,7 +220,7 @@ export function parse (
       if (isIE && ns === 'svg') {
         attrs = guardIESVGBug(attrs)
       }
-
+      // 创建AST对象
       let element: ASTElement = createASTElement(tag, attrs, currentParent)
       if (ns) {
         element.ns = ns
