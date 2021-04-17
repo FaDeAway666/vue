@@ -186,17 +186,19 @@ function initComputed (vm: Component, computed: Object) {
 
     if (!isSSR) {
       // create internal watcher for the computed property.
+      // 创建computed watcher
       watchers[key] = new Watcher(
         vm,
         getter || noop,
         noop,
-        computedWatcherOptions
+        computedWatcherOptions // 传递了一个lazy属性
       )
     }
 
     // component-defined computed properties are already defined on the
     // component prototype. We only need to define computed properties defined
     // at instantiation here.
+    // 判断vm中是否已经存在这个属性
     if (!(key in vm)) {
       defineComputed(vm, key, userDef)
     } else if (process.env.NODE_ENV !== 'production') {
@@ -215,7 +217,9 @@ export function defineComputed (
   userDef: Object | Function
 ) {
   const shouldCache = !isServerRendering()
+  // computed值是一个function
   if (typeof userDef === 'function') {
+    // 重新定义computed属性的getter
     sharedPropertyDefinition.get = shouldCache
       ? createComputedGetter(key)
       : createGetterInvoker(userDef)
@@ -244,10 +248,14 @@ function createComputedGetter (key) {
   return function computedGetter () {
     const watcher = this._computedWatchers && this._computedWatchers[key]
     if (watcher) {
+      // dirty属性只有在传入了lazy = true才会被初始化，并设置为true
       if (watcher.dirty) {
+        // 调用evaluate获取watcher.value，在这个地方会去访问getter依赖的响应式数据
+        // 因此响应式数据的dep中的target设置为computed watcher，在响应式数据发生变化的时候，回去通知
         watcher.evaluate()
       }
       if (Dep.target) {
+        // 收集依赖
         watcher.depend()
       }
       return watcher.value

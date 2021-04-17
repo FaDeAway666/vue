@@ -164,7 +164,7 @@ export default class Watcher {
    */
   update () {
     /* istanbul ignore else */
-    // 渲染watcher的lazy和sync默认为false
+    // 渲染watcher的lazy和sync默认为false，只有computed watcher的lazy为true
     if (this.lazy) {
       this.dirty = true
     } else if (this.sync) {
