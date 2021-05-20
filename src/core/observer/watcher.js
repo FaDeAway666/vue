@@ -79,6 +79,8 @@ export default class Watcher {
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn
     } else {
+      // 如果expOrFn是字符串，例如 watch: { 'name': function () {}}
+      // 调用parsePath来返回一个函数获取name的值
       this.getter = parsePath(expOrFn)
       if (!this.getter) {
         this.getter = noop
@@ -104,6 +106,7 @@ export default class Watcher {
     let value
     const vm = this.vm
     try {
+      // 如果是渲染watcher，这里会执行updateComponent去渲染DOM
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {
@@ -114,10 +117,12 @@ export default class Watcher {
     } finally {
       // "touch" every property so they are all tracked as
       // dependencies for deep watching
+      // 深度监听
       if (this.deep) {
         traverse(value)
       }
       popTarget()
+      // watcher执行完毕，会将自身移除出subs数组
       this.cleanupDeps()
     }
     return value

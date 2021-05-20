@@ -57,7 +57,8 @@ Dep.target = null
 const targetStack = []
 // 入栈并将当前watcher赋值给Dep.target
 // 父子组件嵌套的时候，先把父组件对应的watcher入栈
-// 再去处理子组件的watcher，子组件处理完毕后在将父组件
+// 再去处理子组件的watcher，子组件处理完毕后在将父组件watcher出栈，继续进行处理
+// target先子后父
 export function pushTarget (target: ?Watcher) {
   targetStack.push(target)
   Dep.target = target
@@ -66,5 +67,6 @@ export function pushTarget (target: ?Watcher) {
 export function popTarget () {
   // 出栈操作
   targetStack.pop()
+  // 最后一个watcher也出栈，target变为undefined
   Dep.target = targetStack[targetStack.length - 1]
 }
